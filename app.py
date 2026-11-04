@@ -61,6 +61,16 @@ st.markdown("""
         color: #2D2B28;
     }
 
+    /* Hide Streamlit Branding, Header, Footer, Toolbar & Badges */
+    #MainMenu { visibility: hidden !important; display: none !important; }
+    header { visibility: hidden !important; display: none !important; }
+    footer { visibility: hidden !important; display: none !important; }
+    [data-testid="stToolbar"] { visibility: hidden !important; display: none !important; }
+    [data-testid="stDecoration"] { visibility: hidden !important; display: none !important; }
+    [data-testid="stStatusWidget"] { visibility: hidden !important; display: none !important; }
+    .stAppDeployButton { display: none !important; }
+    [class*="viewerBadge"] { display: none !important; }
+
     /* Main Container Warm Paper Background */
     .stApp, [data-testid="stAppViewContainer"] {
         background-color: #FAF8F5 !important;
