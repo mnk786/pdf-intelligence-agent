@@ -225,23 +225,28 @@ with st.sidebar:
     <div style="font-size: 0.8rem; color: #7A7264; margin-bottom: 20px;">Workspace & Intelligence Controls</div>
     """, unsafe_allow_html=True)
 
-    # 1. API Key configuration (read strictly from .env)
+    # 1. API Key configuration (read from .env or Streamlit Cloud Secrets)
     load_dotenv(override=True)
     active_api_key = (os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")).strip()
+    if not active_api_key and hasattr(st, "secrets"):
+        try:
+            active_api_key = str(st.secrets.get("GEMINI_API_KEY", "") or st.secrets.get("GOOGLE_API_KEY", "")).strip()
+        except Exception:
+            pass
 
     if active_api_key:
         st.markdown("""
         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #2F7C4F; font-weight: 500; background: #EEF6F0; border: 1px solid #D6EBDC; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
-            <span>●</span> API Key Connected (.env)
+            <span>●</span> API Key Connected
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown("""
         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #B34026; font-weight: 500; background: #FDF1ED; border: 1px solid #F6D6CC; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
-            <span>⚠️</span> Missing API Key in .env
+            <span>⚠️</span> Missing API Key
         </div>
         """, unsafe_allow_html=True)
-        st.caption("Please add `GEMINI_API_KEY=AIza...` to your `.env` file.")
+        st.caption("Please add `GEMINI_API_KEY` to your `.env` or Streamlit Cloud Secrets.")
 
     st.markdown("<hr style='border: none; border-top: 1px solid #E6E0D3; margin: 18px 0;'>", unsafe_allow_html=True)
 
@@ -501,7 +506,7 @@ user_query = st.chat_input("Reply to Claude or ask a question about your documen
 if user_query:
     # Validation checks
     if not active_api_key:
-        st.error("Please add your Gemini API Key to `.env` before asking a question.", icon="🔑")
+        st.error("Please add your Gemini API Key to `.env` or Streamlit Cloud Secrets before asking a question.", icon="🔑")
     elif not st.session_state.pdf_context:
         st.warning("Please upload a PDF document first.", icon="📄")
     else:
